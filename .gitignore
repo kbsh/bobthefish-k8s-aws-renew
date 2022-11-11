@@ -1,0 +1,7 @@
+.DS_Store
+
+completions/
+conf.d/
+config.fish
+fish_plugins
+fish_variables
