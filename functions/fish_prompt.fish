@@ -610,7 +610,8 @@ function __bobthefish_k8s_context -S -d 'Get the current k8s context'
 
         while read -l key val
             if [ "$key" = 'current-context:' ]
-                set -l context (string trim -c '"\' ' -- $val)
+                set -l tmpval (string trim -c '"\' ' -- $val)
+                set -l context (string replace -r 'arn:aws:eks:.*:[1-9]*:cluster/' '' -- $tmpval)
                 [ -z "$context" ]
                 and return 1
 
@@ -641,9 +642,9 @@ function __bobthefish_prompt_k8s_context -S -d 'Show current Kubernetes context'
     and [ -z $namespace -o "$namespace" = 'default' ]
     and return
 
-    set -l segment $k8s_glyph ' ' $context
+    set -l segment $k8s_glyph ' ctx:' $context
     [ -n "$namespace" ]
-    and set segment $segment ':' $namespace
+    and set segment $segment ' / ns:' $namespace
 
     __bobthefish_start_segment $color_k8s
     echo -ns $segment ' '
